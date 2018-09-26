@@ -36,6 +36,7 @@ private slots:
     void jackButtonClicked();
     void recordButtonClicked();
     void streamButtonClicked();
+    void micLevelChanged(int value);
 
 // Private utility methods    
 private:

@@ -13,7 +13,7 @@ private:
     bool _playing;
 
 public:
-    MediaFile(QString filePath);
+    MediaFile(QString const filePath, const char* const artist, const char* const title, int duration);
     inline QString const filePath() { return _filePath; }
     inline QString const artist() { return _artist; }
     inline QString const title() { return _title; }

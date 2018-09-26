@@ -27,12 +27,14 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    mediafile.cpp
+    mediafile.cpp \
+    qlevelslider.cpp
 
 HEADERS += \
         mainwindow.h \
     mediafile.h \
-    mediafile.h
+    mediafile.h \
+    qlevelslider.h
 
 FORMS += \
         mainwindow.ui
@@ -41,3 +43,6 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+unix: CONFIG += link_pkgconfig
+unix: PKGCONFIG += taglib

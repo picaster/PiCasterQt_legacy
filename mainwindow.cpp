@@ -3,8 +3,11 @@
 #include "mediafile.h"
 
 #include <QFileDialog>
+#include <taglib.h>
+#include <taglib/fileref.h>
 
 #include <iostream>
+#include <math.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -46,10 +49,19 @@ void MainWindow::init()
         QObject::connect(button, SIGNAL(clicked()), this, SLOT(jingleButtonClicked()));
     });
 
+    ui->micButton->setEnabled(false);
     QObject::connect(ui->micButton, SIGNAL(clicked()), this, SLOT(micButtonClicked()));
+
+    ui->jackButton->setEnabled(true);
     QObject::connect(ui->jackButton, SIGNAL(clicked()), this, SLOT(jackButtonClicked()));
+
+    ui->recordButton->setEnabled(false);
     QObject::connect(ui->recordButton, SIGNAL(clicked()), this, SLOT(recordButtonClicked()));
+
+    ui->streamButton->setEnabled(false);
     QObject::connect(ui->streamButton, SIGNAL(clicked()), this, SLOT(streamButtonClicked()));
+
+    QObject::connect(ui->micLevelSlider, SIGNAL(valueChanged(int)), this, SLOT(micLevelChanged(int)));
 }
 
 void MainWindow::setButtonText(QPushButton* button, MediaFile* mediaFile)
@@ -63,10 +75,14 @@ void MainWindow::setButtonText(QPushButton* button, MediaFile* mediaFile)
 void MainWindow::trackButtonShiftClicked(QPushButton* button)
 {
     if (button->isChecked()) button->toggle();
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open media file"), QString(), tr("Audio files (*.flac, *.mp3)"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open media file"), QString(), tr("Audio files (*.flac *.mp3)"));
     if (!fileName.isEmpty())
     {
-        MediaFile* mediaFile = new MediaFile(fileName);
+        TagLib::FileRef f(fileName.toUtf8().data());
+        TagLib::String artist = f.tag()->artist();
+        TagLib::String title = f.tag()->title();
+        int duration = f.audioProperties()->lengthInSeconds();
+        MediaFile* mediaFile = new MediaFile(fileName, artist.toCString(), title.toCString(), duration);
         button->setUserData(0, mediaFile);
         setButtonText(button, mediaFile);
     }
@@ -133,6 +149,12 @@ void MainWindow::trackButtonClicked()
     */
 }
 
+void MainWindow::micLevelChanged(int value)
+{
+    long double fvalue = value / 100.0l;
+    long double dbValue = 65 * log10(fvalue);
+}
+
 void MainWindow::jingleButtonClicked()
 {
     Qt::KeyboardModifiers kn = QGuiApplication::keyboardModifiers();
@@ -154,7 +176,7 @@ void MainWindow::jingleButtonClicked()
 
 void MainWindow::micButtonClicked()
 {
-    std::cerr << "Mic button clicked" << std::endl;
+
 }
 
 void MainWindow::jackButtonClicked()
