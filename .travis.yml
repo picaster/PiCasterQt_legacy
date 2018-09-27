@@ -5,4 +5,8 @@ before_script:
   - qmake
 script:
   - make
-
+addons:
+  apt:
+    packages:
+      - libtag1-dev
+  
