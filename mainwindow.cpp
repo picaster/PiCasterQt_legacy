@@ -81,7 +81,7 @@ void MainWindow::trackButtonShiftClicked(QPushButton* button)
         TagLib::FileRef f(fileName.toUtf8().data());
         TagLib::String artist = f.tag()->artist();
         TagLib::String title = f.tag()->title();
-        int duration = f.audioProperties()->lengthInSeconds();
+        int duration = f.audioProperties()->length();
         MediaFile* mediaFile = new MediaFile(fileName, artist.toCString(), title.toCString(), duration);
         button->setUserData(0, mediaFile);
         setButtonText(button, mediaFile);
