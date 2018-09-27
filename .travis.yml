@@ -6,4 +6,5 @@ before_script:
 script:
   - make
 before_install:
+  - sudo apt update
   - sudo apt install -y libtag1-dev
