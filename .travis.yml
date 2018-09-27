@@ -5,8 +5,5 @@ before_script:
   - qmake
 script:
   - make
-addons:
-  apt:
-    packages:
-      - libtag1-dev
-  
+before_install:
+  - sudo apt install -y libtag1-dev
