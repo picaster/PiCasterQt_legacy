@@ -1,11 +1,13 @@
 sudo: required
 language: cpp
 dist: trusty
-before_script:
-  - qmake
-script:
-  - make
 before_install:
   - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
   - sudo apt update -qq
-  - sudo apt install -y libtag1-dev qtbase5-dev
+  - sudo apt install -y qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev
+  - sudo apt-get install qt5-default qttools5-dev-tools
+  - sudo apt install -y libtag1-dev
+script:
+  - qmake -project
+  - qmake PiCasterQt.pro
+  - make
