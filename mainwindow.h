@@ -19,6 +19,7 @@ private:
     QPushButton* trackButtons[8];
     QPushButton* jingleButtons[6];
     int tracksPlaying = 0;
+    int jackLocks = 0;
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
@@ -28,6 +29,7 @@ public:
 private:
     void trackButtonShiftClicked(QPushButton* button);
     void setButtonText(QPushButton* button, MediaFile* mediaFile);
+    void manageJackButton(QPushButton* button);
 
 private slots:
     void trackButtonClicked();

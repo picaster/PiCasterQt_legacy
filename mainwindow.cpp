@@ -107,8 +107,10 @@ void MainWindow::trackButtonClicked()
             if (button->isChecked())
             {
                 if (tracksPlaying == 2) button->toggle();
+                else if (!ui->jackButton->isChecked()) button->toggle();
                 else
                 {
+                    manageJackButton(button);
                     std::cerr << "Playing track " << mediaFile->filePath().toUtf8().data() << " for " << button->objectName().toUtf8().data() << std::endl;
                     mediaFile->setPlaying(true);
                     tracksPlaying += 1;
@@ -123,6 +125,7 @@ void MainWindow::trackButtonClicked()
             }
             else
             {
+                manageJackButton(button);
                 std::cerr << "Stopping track " << mediaFile->filePath().toUtf8().data() << " for " << button->objectName().toUtf8().data() << std::endl;
                 tracksPlaying -= 1;
                 mediaFile->setPlaying(false);
@@ -149,13 +152,15 @@ void MainWindow::trackButtonClicked()
     */
 }
 
-void MainWindow::micLevelChanged(int value)
+void
+MainWindow::micLevelChanged(int value)
 {
     long double fvalue = value / 100.0l;
     long double dbValue = 65 * log10(fvalue);
 }
 
-void MainWindow::jingleButtonClicked()
+void
+MainWindow::jingleButtonClicked()
 {
     Qt::KeyboardModifiers kn = QGuiApplication::keyboardModifiers();
     QPushButton* button = dynamic_cast<QPushButton*>(sender());
@@ -174,22 +179,55 @@ void MainWindow::jingleButtonClicked()
     }
 }
 
-void MainWindow::micButtonClicked()
+void
+MainWindow::manageJackButton(QPushButton* button)
 {
-
+    if (button->isChecked())
+    {
+        ui->jackButton->setDisabled(true);
+        jackLocks += 1;
+    }
+    else
+    {
+        jackLocks -= 1;
+        if (jackLocks == 0)
+        {
+            ui->jackButton->setDisabled(false);
+        }
+    }
 }
 
-void MainWindow::jackButtonClicked()
+void
+MainWindow::jackButtonClicked()
 {
-
+    if (ui->jackButton->isChecked())
+    {
+        ui->micButton->setEnabled(true);
+        ui->recordButton->setEnabled(true);
+        ui->streamButton->setEnabled(true);
+    }
+    else
+    {
+        ui->micButton->setEnabled(false);
+        ui->recordButton->setEnabled(false);
+        ui->streamButton->setEnabled(false);
+    }
 }
 
-void MainWindow::recordButtonClicked()
+void
+MainWindow::micButtonClicked()
 {
-
+    manageJackButton(ui->micButton);
 }
 
-void MainWindow::streamButtonClicked()
+void
+MainWindow::recordButtonClicked()
 {
+    manageJackButton(ui->recordButton);
+}
 
+void
+MainWindow::streamButtonClicked()
+{
+    manageJackButton(ui->streamButton);
 }
