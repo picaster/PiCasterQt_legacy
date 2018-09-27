@@ -1,2 +1,8 @@
 PiCasterQt.pro.user
 PiCasterQt.pro.user.472be87
+Makefile
+.qmake.stash
+PiCasterQt
+*.o
+moc_*
+ui_mainwindow.h
