@@ -6,5 +6,6 @@ before_script:
 script:
   - make
 before_install:
-  - sudo apt update
+  - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
+  - sudo apt update -qq
   - sudo apt install -y libtag1-dev qtbase5-dev
