@@ -165,17 +165,24 @@ MainWindow::jingleButtonClicked()
     Qt::KeyboardModifiers kn = QGuiApplication::keyboardModifiers();
     QPushButton* button = dynamic_cast<QPushButton*>(sender());
 
+    if (button->isChecked() && !ui->jackButton->isChecked()) {
+        button->toggle();
+        return;
+    }
+
+    manageJackButton(button);
+
     if (kn & Qt::KeyboardModifier::ShiftModifier)
     {
-        std::cerr << "Shift clicked " << button->objectName().toUtf8().data() << std::endl;
+        //std::cerr << "Shift clicked " << button->objectName().toUtf8().data() << std::endl;
     }
     else if (kn & Qt::KeyboardModifier::ControlModifier)
     {
-        std::cerr << "Control clicked " << button->objectName().toUtf8().data() << std::endl;
+        //std::cerr << "Control clicked " << button->objectName().toUtf8().data() << std::endl;
     }
     else
     {
-        std::cerr << "Clicked " << button->objectName().toUtf8().data() << std::endl;
+        //std::cerr << "Clicked " << button->objectName().toUtf8().data() << std::endl;
     }
 }
 
