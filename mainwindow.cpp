@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "mediafile.h"
 
 #include <QFileDialog>
 #include <taglib.h>
@@ -11,7 +10,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    optionsDialog(new OptionsDialog(this))
 {
     ui->setupUi(this);
 
@@ -32,6 +32,18 @@ MainWindow::MainWindow(QWidget *parent) :
     jingleButtons[5] = ui->jingleButton6;
 }
 
+void
+MainWindow::exitActionTriggered()
+{
+    QApplication::quit();
+}
+
+void
+MainWindow::optionsActionTriggered()
+{
+    optionsDialog->exec();
+}
+
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -41,27 +53,30 @@ void MainWindow::init()
 {
     forTrackButtons([&](QPushButton* button) {
         button->setText("Empty\n0:00");
-        QObject::connect(button, SIGNAL(clicked()), this, SLOT(trackButtonClicked()));
+        connect(button, SIGNAL(clicked()), this, SLOT(trackButtonClicked()));
     });
 
     forJingleButtons([&](QPushButton* button) {
         button->setText("Empty\n0:00");
-        QObject::connect(button, SIGNAL(clicked()), this, SLOT(jingleButtonClicked()));
+        connect(button, SIGNAL(clicked()), this, SLOT(jingleButtonClicked()));
     });
 
     ui->micButton->setEnabled(false);
-    QObject::connect(ui->micButton, SIGNAL(clicked()), this, SLOT(micButtonClicked()));
+    connect(ui->micButton, SIGNAL(clicked()), this, SLOT(micButtonClicked()));
 
     ui->jackButton->setEnabled(true);
-    QObject::connect(ui->jackButton, SIGNAL(clicked()), this, SLOT(jackButtonClicked()));
+    connect(ui->jackButton, SIGNAL(clicked()), this, SLOT(jackButtonClicked()));
 
     ui->recordButton->setEnabled(false);
-    QObject::connect(ui->recordButton, SIGNAL(clicked()), this, SLOT(recordButtonClicked()));
+    connect(ui->recordButton, SIGNAL(clicked()), this, SLOT(recordButtonClicked()));
 
     ui->streamButton->setEnabled(false);
-    QObject::connect(ui->streamButton, SIGNAL(clicked()), this, SLOT(streamButtonClicked()));
+    connect(ui->streamButton, SIGNAL(clicked()), this, SLOT(streamButtonClicked()));
 
-    QObject::connect(ui->micLevelSlider, SIGNAL(valueChanged(int)), this, SLOT(micLevelChanged(int)));
+    connect(ui->micLevelSlider, SIGNAL(valueChanged(int)), this, SLOT(micLevelChanged(int)));
+
+    connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(exitActionTriggered()));
+    connect(ui->actionOptions, SIGNAL(triggered()), this, SLOT(optionsActionTriggered()));
 }
 
 void MainWindow::setButtonText(QPushButton* button, MediaFile* mediaFile)
