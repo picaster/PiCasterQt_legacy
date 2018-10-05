@@ -4,7 +4,9 @@
 #include <QMainWindow>
 #include <QtWidgets/QPushButton>
 
-#include <mediafile.h>
+#include "mediafile.h"
+
+#include "optionsdialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -18,6 +20,8 @@ private:
     Ui::MainWindow *ui;
     QPushButton* trackButtons[8];
     QPushButton* jingleButtons[6];
+    QDialog* optionsDialog;
+
     int tracksPlaying = 0;
     int jackLocks = 0;
 
@@ -39,6 +43,8 @@ private slots:
     void recordButtonClicked();
     void streamButtonClicked();
     void micLevelChanged(int value);
+    void exitActionTriggered();
+    void optionsActionTriggered();
 
 // Private utility methods    
 private:

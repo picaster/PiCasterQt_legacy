@@ -26,19 +26,22 @@ win32: DEFINES += TAGLIB_STATIC
 CONFIG += c++11
 
 SOURCES += \
-        main.cpp \
-        mainwindow.cpp \
+    main.cpp \
+    mainwindow.cpp \
     mediafile.cpp \
-    qlevelslider.cpp
+    qlevelslider.cpp \
+    optionsdialog.cpp
 
 HEADERS += \
-        mainwindow.h \
+    mainwindow.h \
     mediafile.h \
     mediafile.h \
-    qlevelslider.h
+    qlevelslider.h \
+    optionsdialog.h
 
 FORMS += \
-        mainwindow.ui
+    mainwindow.ui \
+    optionsdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -46,7 +49,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 unix: CONFIG += link_pkgconfig
-unix: PKGCONFIG += taglib
+unix: PKGCONFIG += taglib alsa
 
 win32: LIBS += -L$$PWD/../opt/lib/ -ltag
 
