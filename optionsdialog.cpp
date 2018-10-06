@@ -1,5 +1,7 @@
 #include <alsa/asoundlib.h>
 
+#include <QSettings>
+
 #include <stdio.h>
 #include <iostream>
 
@@ -29,14 +31,25 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
     bool bCapture, bPlayback;
     int iCard = -1;
 
+    QSettings settings;
+    QString sCurrentInputDevice = settings.value("input device").toString();
+    QString sCurrentOutputDevice = settings.value("output device").toString();
+
     while (snd_card_next(&iCard) >= 0 && iCard >= 0) {
         sName = sPrefix.arg(iCard);
         if (snd_ctl_open(&handle, sName.toUtf8().constData(), 0) >= 0 && snd_ctl_card_info(handle, info) >= 0) {
             sName2 = sPrefix.arg(snd_ctl_card_info_get_id(info));
-            std::cerr << "card" << std::endl;
-            addCard(sName2, snd_ctl_card_info_get_name(info) + sSuffix.arg(sName));
-            ui->inputDeviceList->addItem(sName2);
-            ui->outputDeviceList->addItem(sName2);
+
+            QListWidgetItem* item = addCard(sName2, snd_ctl_card_info_get_name(info) + sSuffix.arg(sName), ui->inputDeviceList);
+            if (sName2 == sCurrentInputDevice) {
+                item->setSelected(true);
+            }
+
+            item = addCard(sName2, snd_ctl_card_info_get_name(info) + sSuffix.arg(sName), ui->outputDeviceList);
+            if (sName2 == sCurrentOutputDevice) {
+                item->setSelected(true);
+            }
+
             if (sCurName == sName || sCurName == sName2) iCurCard = iCards;
             ++iCards;
             int iDevice = -1;
@@ -59,56 +72,24 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
 
                 QString sSubName  = sSubSuffix.arg(sName).arg(iDevice);
                 QString sSubName2 = sSubSuffix.arg(sName2).arg(iDevice);
-                if (bCapture) ui->inputDeviceList->addItem(sSubName);
-                if (bPlayback) ui->outputDeviceList->addItem(sSubName);
-                std::cerr << "capture: " << bCapture << ", playback: " << bPlayback << std::endl;
-                addCard(sSubName2, snd_pcm_info_get_name(pcminfo) + sSuffix.arg(sSubName));
+                if (bCapture) {
+                    QListWidgetItem* item = addCard(sSubName2, snd_ctl_card_info_get_name(info) + sSuffix.arg(sName), ui->inputDeviceList);
+                    if (sSubName2 == sCurrentInputDevice) {
+                        item->setSelected(true);
+                    }
+                }
+                if (bPlayback) {
+                    QListWidgetItem* item = addCard(sSubName2, snd_ctl_card_info_get_name(info) + sSuffix.arg(sName), ui->outputDeviceList);
+                    if (sSubName2 == sCurrentOutputDevice) {
+                        item->setSelected(true);
+                    }
+                }
                 if (sCurName == sSubName || sCurName == sSubName2) iCurCard = iCards;
                 ++iCards;
             }
         }
+        snd_ctl_close(handle);
     }
-    /*
-    int cardNum = -1;
-    int err;
-    for (;;) {
-        snd_ctl_t* cardHandle;
-        if ((err = snd_card_next(&cardNum)) < 0) {
-            fprintf(stderr, "Can't get the next card number: %s\n", snd_strerror(err));
-            break;
-        }
-        if (cardNum < 0) break;
-
-        {
-            char str[64];
-            sprintf(str, "hw:%i", cardNum);
-            if ((err = snd_ctl_open(&cardHandle, str, 0)) < 0)
-            {
-                printf("Can't open card %i: %s\n", cardNum, snd_strerror(err));
-                continue;
-            }
-        }
-
-        {
-            snd_ctl_card_info_t *cardInfo;
-            snd_ctl_card_info_alloca(&cardInfo);
-
-            if ((err = snd_ctl_card_info(cardHandle, cardInfo)) < 0)
-            {
-                printf("Can't get info for card %i: %s\n", cardNum, snd_strerror(err));
-            }
-            else
-            {
-                const char* card_name = snd_ctl_card_info_get_name(cardInfo);
-                const char* card_id = snd_ctl_card_info_get_id(cardInfo);
-                std::cerr << card_name << ", " << card_id << std::endl;
-            }
-        }
-        snd_ctl_close(cardHandle);
-    }
-
-    snd_config_update_free_global();
-    */
 }
 
 OptionsDialog::~OptionsDialog()
@@ -116,8 +97,24 @@ OptionsDialog::~OptionsDialog()
     delete ui;
 }
 
-void
-OptionsDialog::addCard(const QString& sName, const QString& sDescription)
+QListWidgetItem*
+OptionsDialog::addCard(const QString& sName, const QString& sDescription, QListWidget* list)
 {
-    std::cerr << sName.toStdString() << ", " << sDescription.toStdString() << std::endl;
+    QListWidgetItem* item = new QListWidgetItem(sName);
+    list->addItem(item);
+    return item;
+}
+
+QString
+OptionsDialog::getInputDevice()
+{
+    QListWidgetItem* item = ui->inputDeviceList->selectedItems().first();
+    return item->text();
+}
+
+QString
+OptionsDialog::getOutputDevice()
+{
+    QListWidgetItem* item = ui->outputDeviceList->selectedItems().first();
+    return item->text();
 }

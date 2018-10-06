@@ -20,7 +20,7 @@ private:
     Ui::MainWindow *ui;
     QPushButton* trackButtons[8];
     QPushButton* jingleButtons[6];
-    QDialog* optionsDialog;
+    OptionsDialog* optionsDialog;
 
     int tracksPlaying = 0;
     int jackLocks = 0;

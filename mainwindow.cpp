@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include <QFileDialog>
+#include <QSettings>
 #include <taglib.h>
 #include <taglib/fileref.h>
 
@@ -41,7 +42,11 @@ MainWindow::exitActionTriggered()
 void
 MainWindow::optionsActionTriggered()
 {
-    optionsDialog->exec();
+    if (optionsDialog->exec() == QDialog::Accepted) {
+        QSettings settings;
+        settings.setValue("input device", optionsDialog->getInputDevice());
+        settings.setValue("output device", optionsDialog->getOutputDevice());
+    }
 }
 
 MainWindow::~MainWindow()
