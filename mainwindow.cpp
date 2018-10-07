@@ -5,9 +5,13 @@
 #include <QSettings>
 #include <taglib.h>
 #include <taglib/fileref.h>
+#include <jack/jack.h>
 
 #include <iostream>
 #include <math.h>
+
+#include "jackclient.h"
+#include "jackfadermodule.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -82,6 +86,14 @@ void MainWindow::init()
 
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(exitActionTriggered()));
     connect(ui->actionOptions, SIGNAL(triggered()), this, SLOT(optionsActionTriggered()));
+
+    jack_client = new JackClient("PiCasterQt");
+    mic_fader_module = new JackFaderModule("mic", jack_client);
+    mic_fader_module->mute();
+    jack_client->process();
+
+    ui->jackButton->toggle();
+    jackButtonClicked();
 }
 
 void MainWindow::setButtonText(QPushButton* button, MediaFile* mediaFile)
@@ -175,8 +187,9 @@ void MainWindow::trackButtonClicked()
 void
 MainWindow::micLevelChanged(int value)
 {
-    long double fvalue = value / 100.0l;
-    long double dbValue = 65 * log10(fvalue);
+    long double f_value = value / 100.0l;
+    long double db_value = 65 * log10(f_value);
+    mic_fader_module->set_amplification(pow(10, db_value / 20.0l));
 }
 
 void
@@ -245,8 +258,14 @@ void
 MainWindow::micButtonClicked()
 {
     manageJackButton(ui->micButton);
+    if (ui->micButton->isChecked()) mic_fader_module->unmute(); else mic_fader_module->mute();
 }
 
+bool
+MainWindow::isMicOpen()
+{
+    return ui->micButton->isChecked();
+}
 void
 MainWindow::recordButtonClicked()
 {

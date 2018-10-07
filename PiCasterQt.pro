@@ -30,14 +30,22 @@ SOURCES += \
     mainwindow.cpp \
     mediafile.cpp \
     qlevelslider.cpp \
-    optionsdialog.cpp
+    optionsdialog.cpp \
+    jackclient.cpp \
+    jackmodule.cpp \
+    jackfadermodule.cpp \
+    jackport.cpp
 
 HEADERS += \
     mainwindow.h \
     mediafile.h \
     mediafile.h \
     qlevelslider.h \
-    optionsdialog.h
+    optionsdialog.h \
+    jackclient.h \
+    jackmodule.h \
+    jackfadermodule.h \
+    jackport.h
 
 FORMS += \
     mainwindow.ui \
@@ -49,7 +57,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 unix: CONFIG += link_pkgconfig
-unix: PKGCONFIG += taglib alsa
+unix: PKGCONFIG += taglib alsa jack
 
 win32: LIBS += -L$$PWD/../opt/lib/ -ltag
 

@@ -5,8 +5,10 @@
 #include <QtWidgets/QPushButton>
 
 #include "mediafile.h"
-
 #include "optionsdialog.h"
+
+class JackClient;
+class JackFaderModule;
 
 namespace Ui {
 class MainWindow;
@@ -24,11 +26,14 @@ private:
 
     int tracksPlaying = 0;
     int jackLocks = 0;
+    JackClient* jack_client;
+    JackFaderModule* mic_fader_module;
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void init();
+    bool isMicOpen();
 
 private:
     void trackButtonShiftClicked(QPushButton* button);
