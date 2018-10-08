@@ -6,3 +6,9 @@ PiCasterQt
 *.o
 moc_*
 ui_mainwindow.h
+parts/
+*.snap
+*_source.tar.bz2
+prime/
+stage/
+snap/.snapcraft/
